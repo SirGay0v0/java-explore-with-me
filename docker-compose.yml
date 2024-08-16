@@ -1,15 +1,44 @@
-version: '3.1'
+version: '3.8'
+
 services:
+  postgres:
+    image: postgres:16.1
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: explore
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+
   stats-server:
+    build:
+      context: stats/stats-server
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
+      - "9091:9091"
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/explore
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - TZ=Europe/Moscow
 
-  stats-db:
-    image: postgres:14-alpine
 
-  ewm-service:
-    ports:
-      - "8080:8080"
-
-  ewm-db:
-    image: postgres:14-alpine
+#services:
+#  stats-server:
+#    ports:
+#      - "9090:9090"
+#
+#  stats-db:
+#    image: postgres:16.1
+#
+#  ewm-service:
+#    ports:
+#      - "8080:8080"
+#
+#  ewm-db:
+#    image: postgres:16.1
