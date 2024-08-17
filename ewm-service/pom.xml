@@ -50,7 +50,11 @@
             <artifactId>modelmapper</artifactId>
             <version>3.2.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.7.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -59,6 +63,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 </project>
