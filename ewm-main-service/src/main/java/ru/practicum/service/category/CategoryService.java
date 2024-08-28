@@ -1,5 +1,6 @@
 package ru.practicum.service.category;
 
+import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.category.dto.CategoryDto;
@@ -16,5 +17,5 @@ public interface CategoryService {
 
     List<Category> getCategories(int from, int size);
 
-    Category getCategory(Long catId) throws NotFoundException;
+    Category getCategory(Long catId) throws NotFoundException, EntityNotFoundException;
 }

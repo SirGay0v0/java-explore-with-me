@@ -5,12 +5,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.exceptions.EntityNotFoundException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.category.dto.CategoryDto;
 import ru.practicum.storage.CategoryStorage;
 
 import java.util.List;
+
+;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategory(Long catId) throws NotFoundException {
-        return storage.findById(catId).orElseThrow(() -> new NotFoundException("Category not found with id " + catId));
+    public Category getCategory(Long catId) throws EntityNotFoundException {
+        return storage.findById(catId).orElseThrow(() -> new EntityNotFoundException("Category not found with id " + catId));
     }
 }
