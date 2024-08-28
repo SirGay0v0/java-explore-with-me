@@ -43,7 +43,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleConsraintViolationException(final ConstraintViolationException e) {
+    public ApiError handleConstraintViolationException(final ConstraintViolationException e) {
         List<StackTraceElement> list = List.of(e.getStackTrace());
         log.info("bad request");
         ApiError apiError = new ApiError();
