@@ -22,11 +22,12 @@ import ru.practicum.storage.EventStorage;
 import ru.practicum.storage.RequestStorage;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.config.Constants.formatter;
 
 @Service
 public class PublicEventServiceImpl implements PublicEventService {
@@ -36,8 +37,6 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final ModelMapper mapper;
     private final StatsClient client;
     private final String statsUri;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 
     public PublicEventServiceImpl(EventStorage eventStorage,
                                   RequestStorage requestStorage, ModelMapper mapper,
@@ -63,7 +62,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         }
 
         if (rangeStart == null && rangeEnd == null) {
-            events = eventStorage.findEventsByAllCriteriaWithoutTime(text, categoriesId, paid, pageable);
+            events = eventStorage.findByAllCriteriaWithoutTime(text, categoriesId, paid, pageable);
             sendStatistic(request, "/events");
             return events.stream()
                     .map(event -> mapper.map(event, EventDtoResponse.class))
@@ -74,7 +73,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (toDate.isBefore(fromDate)) {
             throw new ValidationException("Start couldn't be after end");
         }
-        events = eventStorage.findEventsByAllCriteria(text, categoriesId, paid, fromDate, toDate, pageable);
+        events = eventStorage.findByAllCriteria(text, categoriesId, paid, fromDate, toDate, pageable);
 
         sendStatisticWithManyEvents(request, events);
         sendStatistic(request, "/events");

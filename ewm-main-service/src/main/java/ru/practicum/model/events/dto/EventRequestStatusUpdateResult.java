@@ -1,16 +1,14 @@
 package ru.practicum.model.events.dto;
 
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.model.requests.dto.ParticipationRequestDto;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class EventRequestStatusUpdateResult {

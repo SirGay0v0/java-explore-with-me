@@ -1,15 +1,13 @@
 package ru.practicum.model.events.dto;
 
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.user.dto.UserDto;
 
-@Getter
-@Setter
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class EventShortDto {
