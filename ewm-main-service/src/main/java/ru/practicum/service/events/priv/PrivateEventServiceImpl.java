@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +37,10 @@ import ru.practicum.storage.RequestStorage;
 import ru.practicum.storage.UserStorage;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.practicum.config.Constants.formatter;
@@ -161,11 +161,16 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             List<Long> listIdsRequests = eventRequestStatusUpdateRequest.getRequestIds();
 
             if (event.getParticipantLimit() == 0) {
+                Map<Long, ParticipationRequest> requestsMap = requestStorage.findAllById(listIdsRequests).stream()
+                        .collect(Collectors.toMap(ParticipationRequest::getId, Function.identity()));
+
                 for (Long id : listIdsRequests) {
-                    ParticipationRequest request = requestStorage.findById(id).orElseThrow(() -> new EntityNotFoundException("Request with id " + id +
-                            " was not found"));
+                    ParticipationRequest request = requestsMap.get(id);
+                    if (request == null) {
+                        throw new EntityNotFoundException("Request with id " + id + " was not found");
+                    }
                     request.setStatus(Status.CONFIRMED);
-                    requestStorage.save(request);
+                    requestStorage.save(request); // Здесь сохраняем изменения в базе данных
                 }
             }
 
