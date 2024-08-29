@@ -21,9 +21,10 @@ public interface RequestStorage extends JpaRepository<ParticipationRequest, Long
 
     @Query("SELECT r.event.id, COUNT(r.id) " +
             "FROM ParticipationRequest r " +
-            "WHERE r.status = :status AND r.event.id IN :eventIds GROUP BY r.event.id")
-    Map<Long, Long> countConfirmedRequestsForEvents(@Param("status") Status status,
-                                                    @Param("eventIds") List<Long> eventIds);
+            "WHERE r.status = :status AND r.event.id IN :eventIds " +
+            "GROUP BY r.event.id")
+    List<Object[]> countConfirmedRequestsForEvents(@Param("status") Status status,
+                                                   @Param("eventIds") List<Long> eventIds);
 
 
     @Query("SELECT COUNT (p) " +

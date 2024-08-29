@@ -100,7 +100,13 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         List<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
-        Map<Long, Long> confirmedRequestsMap = requestStorage.countConfirmedRequestsForEvents(Status.CONFIRMED, eventIds);
+        List<Object[]> resultList = requestStorage.countConfirmedRequestsForEvents(Status.CONFIRMED, eventIds);
+
+        Map<Long, Long> confirmedRequestsMap = resultList.stream()
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0],
+                        result -> (Long) result[1]
+                ));
 
         return events.stream()
                 .map(event -> {
