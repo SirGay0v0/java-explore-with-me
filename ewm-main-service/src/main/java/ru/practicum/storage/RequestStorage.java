@@ -8,7 +8,6 @@ import ru.practicum.model.events.Status;
 import ru.practicum.model.requests.ParticipationRequest;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface RequestStorage extends JpaRepository<ParticipationRequest, Long> {
