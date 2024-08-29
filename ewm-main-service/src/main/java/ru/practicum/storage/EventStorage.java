@@ -28,35 +28,35 @@ public interface EventStorage extends JpaRepository<Event, Long> {
     @Query(value = "select e from Event e where (e.initiator.id IN :usersId) AND " +
             "(e.state IN :states) AND (e.category.id IN :categoriesId) " +
             "order by e.eventDate desc")
-    List<Event> findByUsersStateCategory(@Param("usersId") List<Long> usersId,
-                                         @Param("states") List<State> states,
-                                         @Param("categoriesId") List<Long> categoriesId, Pageable pageable);
+    List<Event> findEventByUsersAndStateAndCategory(@Param("usersId") List<Long> usersId,
+                                                    @Param("states") List<State> states,
+                                                    @Param("categoriesId") List<Long> categoriesId, Pageable pageable);
 
     @Query(value = "select e from Event e where (e.initiator.id IN :usersId) AND " +
             "(e.state IN :states) AND (e.category.id IN :categoriesId) AND " +
             "e.eventDate BETWEEN :start AND :end order by e.eventDate")
-    List<Event> findByUsersStateCategoryBetween(@Param("usersId") List<Long> usersId, @Param("states") List<State> states,
-                                                @Param("categoriesId") List<Long> categoriesId,
-                                                @Param("start") LocalDateTime startTime,
-                                                @Param("end") LocalDateTime endTime, Pageable pageable);
+    List<Event> findEventByUsersAndStateAndCategoryBetween(@Param("usersId") List<Long> usersId, @Param("states") List<State> states,
+                                                           @Param("categoriesId") List<Long> categoriesId,
+                                                           @Param("start") LocalDateTime startTime,
+                                                           @Param("end") LocalDateTime endTime, Pageable pageable);
 
     @Query(value = "select e " +
             "from Event e " +
             "where LOWER(e.annotation) like LOWER(CONCAT('%', :text, '%')) AND e.category.id IN :categoriesId " +
             "AND (:paid IS NULL OR e.paid = :paid) AND e.state = 'PUBLISHED' " +
             "order by e.eventDate desc")
-    List<Event> findByAllCriteriaWithoutTime(@Param("text") String textAnnotation,
-                                             @Param("categoriesId") List<Long> categoriesId,
-                                             @Param("paid") Boolean paid, Pageable pageable);
+    List<Event> findEventsByAllCriteriaWithoutTime(@Param("text") String textAnnotation,
+                                                   @Param("categoriesId") List<Long> categoriesId,
+                                                   @Param("paid") Boolean paid, Pageable pageable);
 
     @Query(value = "select e " +
             "from Event e " +
             "where LOWER(e.annotation) like LOWER(:text) AND e.category.id IN :categoriesId " +
             "AND (:paid IS NULL OR e.paid = :paid) AND e.state = 'PUBLISHED' AND e.eventDate BETWEEN :start AND :end " +
             "order by e.eventDate desc")
-    List<Event> findByAllCriteria(@Param("text") String textAnnotation,
-                                  @Param("categoriesId") List<Long> categoriesId,
-                                  @Param("paid") Boolean paid, @Param("start") LocalDateTime start,
-                                  @Param("end") LocalDateTime end, Pageable pageable);
+    List<Event> findEventsByAllCriteria(@Param("text") String textAnnotation,
+                                        @Param("categoriesId") List<Long> categoriesId,
+                                        @Param("paid") Boolean paid, @Param("start") LocalDateTime start,
+                                        @Param("end") LocalDateTime end, Pageable pageable);
 }
 

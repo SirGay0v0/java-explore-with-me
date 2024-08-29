@@ -2,12 +2,14 @@ package ru.practicum.model.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class CategoryDto {
