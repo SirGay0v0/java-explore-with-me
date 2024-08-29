@@ -90,12 +90,12 @@ public class AdminEventServiceImpl implements AdminEventService {
             stateList = new ArrayList<>();
         }
         if (rangeStart == null && rangeEnd == null) {
-            events = eventStorage.findEventByUsersAndStateAndCategory(usersId, stateList, categoriesId, pageable);
+            events = eventStorage.findByUsersStateCategory(usersId, stateList, categoriesId, pageable);
         }
         if (rangeStart != null && rangeEnd != null) {
             LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, formatter);
             LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, formatter);
-            events = eventStorage.findEventByUsersAndStateAndCategoryBetween(usersId, stateList, categoriesId,
+            events = eventStorage.findByUsersStateCategoryBetween(usersId, stateList, categoriesId,
                     startDateTime, endDateTime, pageable);
         }
 

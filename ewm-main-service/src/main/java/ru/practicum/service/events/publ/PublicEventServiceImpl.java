@@ -63,7 +63,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         }
 
         if (rangeStart == null && rangeEnd == null) {
-            events = eventStorage.findEventsByAllCriteriaWithoutTime(text, categoriesId, paid, pageable);
+            events = eventStorage.findByAllCriteriaWithoutTime(text, categoriesId, paid, pageable);
             sendStatistic(request, "/events");
             return events.stream()
                     .map(event -> mapper.map(event, EventDtoResponse.class))
@@ -74,7 +74,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (toDate.isBefore(fromDate)) {
             throw new ValidationException("Start couldn't be after end");
         }
-        events = eventStorage.findEventsByAllCriteria(text, categoriesId, paid, fromDate, toDate, pageable);
+        events = eventStorage.findByAllCriteria(text, categoriesId, paid, fromDate, toDate, pageable);
 
         sendStatisticWithManyEvents(request, events);
         sendStatistic(request, "/events");
