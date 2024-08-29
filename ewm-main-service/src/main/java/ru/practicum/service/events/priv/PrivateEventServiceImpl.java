@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.config.Constants.formatter;
+
 @Service
 public class PrivateEventServiceImpl implements PrivateEventService {
 
@@ -53,7 +55,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final ModelMapper mapper;
     private final StatsClient client;
     private final String statsUri;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public PrivateEventServiceImpl(EventStorage eventStorage, UserStorage userStorage,
                                    CategoryStorage categoryStorage, RequestStorage requestStorage, ModelMapper mapper,
@@ -209,7 +210,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     private void updatePublicEvent(Event target, UpdateEventUserRequest source) throws EntityNotFoundException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (source.getAnnotation() != null) {
             target.setAnnotation(source.getAnnotation());
         }

@@ -22,11 +22,12 @@ import ru.practicum.storage.EventStorage;
 import ru.practicum.storage.RequestStorage;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.config.Constants.formatter;
 
 @Service
 public class PublicEventServiceImpl implements PublicEventService {
@@ -36,7 +37,6 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final ModelMapper mapper;
     private final StatsClient client;
     private final String statsUri;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public PublicEventServiceImpl(EventStorage eventStorage,

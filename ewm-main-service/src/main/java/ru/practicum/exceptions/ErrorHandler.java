@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static ru.practicum.config.Constants.formatter;
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -23,7 +25,7 @@ public class ErrorHandler {
         List<StackTraceElement> list = List.of(e.getStackTrace());
         log.info("email already exists");
         return new ApiError(list, e.getMessage(), e.getCause().toString(), HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                LocalDateTime.now().format(formatter));
     }
 
     @ExceptionHandler
