@@ -20,6 +20,7 @@ import ru.practicum.model.category.Category;
 import ru.practicum.model.events.AdminStateAction;
 import ru.practicum.model.events.Event;
 import ru.practicum.model.events.State;
+import ru.practicum.model.events.Status;
 import ru.practicum.model.events.dto.EventDtoResponse;
 import ru.practicum.model.events.dto.UpdateEventAdminRequest;
 import ru.practicum.model.location.Location;
@@ -30,6 +31,8 @@ import ru.practicum.storage.RequestStorage;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.config.Constants.formatter;
@@ -64,8 +67,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     public List<EventDtoResponse> getAdminEvents(List<Long> usersId, List<String> states, List<Long> categoriesId,
                                                  String rangeStart, String rangeEnd, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        List<Event> events = new ArrayList<>();
-        List<State> stateList = new ArrayList<>();
+        List<Event> events;
 
         if (usersId == null && states == null && categoriesId == null && rangeStart == null && rangeEnd == null) {
             events = eventStorage.findByEmptyParameters(pageable);
@@ -76,32 +78,36 @@ public class AdminEventServiceImpl implements AdminEventService {
                     .collect(Collectors.toList());
         }
 
+        var stateList = Optional.ofNullable(states)
+                .map(s -> s.stream().map(State::valueOf).collect(Collectors.toList()))
+                .orElse(List.of());
+
         if (categoriesId == null) {
             categoriesId = new ArrayList<>();
         }
         if (usersId == null) {
             usersId = new ArrayList<>();
         }
-        if (states != null) {
-            for (String state : states) {
-                stateList.add(State.valueOf(state));
-            }
-        } else {
-            stateList = new ArrayList<>();
-        }
+
         if (rangeStart == null && rangeEnd == null) {
             events = eventStorage.findByUsersStateCategory(usersId, stateList, categoriesId, pageable);
-        }
-        if (rangeStart != null && rangeEnd != null) {
+        } else if (rangeStart != null && rangeEnd != null) {
             LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, formatter);
             LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, formatter);
-            events = eventStorage.findByUsersStateCategoryBetween(usersId, stateList, categoriesId,
-                    startDateTime, endDateTime, pageable);
+            events = eventStorage.findByUsersStateCategoryBetween(usersId, stateList, categoriesId, startDateTime, endDateTime, pageable);
+        } else {
+            events = new ArrayList<>();
         }
 
+        List<Long> eventIds = events.stream().map(Event::getId).collect(Collectors.toList());
+        Map<Long, Long> confirmedRequestsMap = requestStorage.countConfirmedRequestsForEvents(Status.CONFIRMED, eventIds);
+
         return events.stream()
-                .map(event -> mapper.map(event, EventDtoResponse.class))
-                .map(event -> event.setConfirmedRequests(requestStorage.countConfirmedRequests(event.getId())))
+                .map(event -> {
+                    EventDtoResponse response = mapper.map(event, EventDtoResponse.class);
+                    response.setConfirmedRequests(confirmedRequestsMap.getOrDefault(event.getId(), 0L));
+                    return response;
+                })
                 .map(this::getStat)
                 .collect(Collectors.toList());
     }
