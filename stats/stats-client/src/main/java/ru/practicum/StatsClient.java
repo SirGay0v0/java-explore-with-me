@@ -1,52 +1,38 @@
 package ru.practicum;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class StatsClient {
-
     private final RestTemplate rest;
-
-    @Value("${shareit-server.url}")
-    private String uri;
 
     public StatsClient(RestTemplate rest) {
         this.rest = rest;
     }
 
-    public EndpointHitRequestDto saveHit(String app, String uri, String ip) {
-        EndpointHitRequestDto endpoint = new EndpointHitRequestDto()
-                .setApp(app)
-                .setUri(uri)
-                .setIp(ip)
-                .setTimestamp(LocalDateTime.now().toString());
-        ResponseEntity<EndpointHitRequestDto> response = rest.postForEntity(
-                uri + "/hit", endpoint, EndpointHitRequestDto.class);
-        return response.getBody();
+    public ResponseEntity<Object> getRequest(String uri) {
+        return prepareRequest(uri, null, HttpMethod.GET);
     }
 
-    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+    public <T> ResponseEntity<Object> postRequest(String uri, T body) {
+        return prepareRequest(uri, body, HttpMethod.POST);
+    }
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri + "/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .queryParam("uris", uris)
-                .queryParam("unique", unique);
+    private <T> ResponseEntity<Object> prepareRequest(String uri, T body, HttpMethod method) {
+        HttpEntity<Object> entity = new HttpEntity<>(body, this.defaultHeaders());
+        return rest.exchange(uri, method, entity, Object.class);
+    }
 
-        ResponseEntity<List<ViewStats>> response = rest.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<ViewStats>>() {
-                }
-        );
-        return response.getBody();
+    private HttpHeaders defaultHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        return headers;
     }
 }
