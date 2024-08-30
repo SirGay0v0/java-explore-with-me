@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -38,10 +37,11 @@ import ru.practicum.storage.RequestStorage;
 import ru.practicum.storage.UserStorage;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.Constants.formatter;
 
 @Service
 public class PrivateEventServiceImpl implements PrivateEventService {
@@ -53,7 +53,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final ModelMapper mapper;
     private final StatsClient client;
     private final String statsUri;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public PrivateEventServiceImpl(EventStorage eventStorage, UserStorage userStorage,
                                    CategoryStorage categoryStorage, RequestStorage requestStorage, ModelMapper mapper,
@@ -209,7 +208,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     private void updatePublicEvent(Event target, UpdateEventUserRequest source) throws EntityNotFoundException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (source.getAnnotation() != null) {
             target.setAnnotation(source.getAnnotation());
         }

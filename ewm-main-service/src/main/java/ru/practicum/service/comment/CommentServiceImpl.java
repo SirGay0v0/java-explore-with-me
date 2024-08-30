@@ -3,7 +3,6 @@ package ru.practicum.service.comment;
 
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.practicum.exceptions.CommentException;
 import ru.practicum.exceptions.EntityNotFoundException;
@@ -21,11 +20,12 @@ import ru.practicum.storage.EventStorage;
 import ru.practicum.storage.UserStorage;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.practicum.Constants.formatter;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +34,6 @@ public class CommentServiceImpl implements CommentService {
     private final UserStorage userStorage;
     private final EventStorage eventStorage;
     private final CommentStorage commentStorage;
-    private final ModelMapper mapper;
-
 
     @Override
     public CommentResponseDto create(Long userId, Long eventId, NewCommentDto newCommentDto) throws EntityNotFoundException, EventIsNotPublishedException {
@@ -78,7 +76,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponseDto> getComments(@Nullable List<Long> usersId, @Nullable List<Long> eventsId,
                                                 @Nullable String text, @Nullable String startTime, String endTime) throws ValidationException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         if (usersId == null) {
             usersId = commentStorage.findUsersId();
@@ -117,8 +114,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentResponseDto commentToResponseDto(Comment source) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         return new CommentResponseDto()
                 .setAuthor(source.getAuthor().getId())
                 .setText(source.getText())
