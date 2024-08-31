@@ -67,5 +67,4 @@ public class PrivateCommentController {
     public void delete(@PathVariable(name = "commentId") Long commentId) throws EntityNotFoundException {
         service.delete(commentId);
     }
-
 }
